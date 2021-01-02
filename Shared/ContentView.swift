@@ -46,22 +46,22 @@ struct ContentView: View {
     func changeFilename(){
     
         let target  = getTargetURL()
-        
         var rv = URLResourceValues()
-        
         let newFileName = target.deletingPathExtension().lastPathComponent
         rv.name = newFileName
         
+//        let mover = FileMover()
+//        let moved = mover.moveFile(originalURL: fileurl, updatedURL: target)
+//        print("moved?\(moved)")
         do {
             if fileurl.startAccessingSecurityScopedResource(){
-                try fileurl.setResourceValues(rv)
+                //try fileurl.setResourceValues(rv)
+                try FileManager.default.copyItem(at: fileurl, to: target)
                 fileurl.stopAccessingSecurityScopedResource()
             }
         } catch {
             print("Error:\(error)")
-
         }
-        
     }
     func getTargetURL() -> URL {
         let baseURL  =  self.fileurl.deletingLastPathComponent()
@@ -69,13 +69,13 @@ struct ContentView: View {
         print("filename: \(self.filename)")
         print("fileURL: \(self.fileurl)")
         print("BaseURL: \(baseURL)")
-        var target = URL(fileURLWithPath: baseURL.path + "/\(filename).plain-text")
+        var target = URL(fileURLWithPath: baseURL.path + "/\(filename).exampletext")
 
         var nameSuffix = 1
         
         while (target as NSURL).checkPromisedItemIsReachableAndReturnError(nil) {
             
-            target = URL(fileURLWithPath: baseURL.path + "/\(filename)-\(nameSuffix).sermon")
+            target = URL(fileURLWithPath: baseURL.path + "/\(filename)-\(nameSuffix).exampletext")
             print("Checking: \(target)")
             nameSuffix += 1
        }

@@ -37,3 +37,29 @@ struct DocumentRenamerDocument: FileDocument {
         return .init(regularFileWithContents: data)
     }
 }
+
+class FileMover: NSObject {
+    func moveFile(originalURL: URL, updatedURL:URL) -> Bool {
+        let coordinator = NSFileCoordinator(filePresenter: nil)
+        var writingError: NSError? = nil
+        var success : Bool = true
+        print("moving file")
+        coordinator.coordinate(writingItemAt: originalURL, options: NSFileCoordinator.WritingOptions.forMoving, error: &writingError, byAccessor: { (coordinatedURL) in
+            do {
+                coordinator.item(at: originalURL, willMoveTo: coordinatedURL)
+                try FileManager.default.moveItem(at: coordinatedURL, to: updatedURL)
+                coordinator.item(at: originalURL, didMoveTo: coordinatedURL)
+
+                success = true
+                print("file moved")
+                
+            } catch {
+                
+                success = false
+            }
+        })
+    return success
+        
+    }
+}
+
